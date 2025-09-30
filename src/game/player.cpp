@@ -1,0 +1,53 @@
+#include "player.h"
+
+Player::Player()
+{
+    m_speed = 5.0f;
+    m_lastX = 400.0f; // assuming initial window width / 2
+    m_lastY = 300.0f; // assuming initial window height / 2
+    m_sensitivity = 0.1f;
+}
+
+void Player::update(float deltaTime)
+{
+    m_transform.update();
+
+    glm::vec3 moveDirection(0.0f);
+    if (Input::isKeyHeld(GLFW_KEY_W))
+        moveDirection += m_transform.forward;
+    if (Input::isKeyHeld(GLFW_KEY_S))
+        moveDirection += -m_transform.forward;
+    if (Input::isKeyHeld(GLFW_KEY_A))
+        moveDirection += -m_transform.right;
+    if (Input::isKeyHeld(GLFW_KEY_D))
+        moveDirection += m_transform.right;
+    if (Input::isKeyHeld(GLFW_KEY_SPACE))
+        moveDirection.y += 1.0f;
+    if (Input::isKeyHeld(GLFW_KEY_LEFT_SHIFT))
+        moveDirection.y -= 1.0f;
+
+    if (glm::length(moveDirection) > 0.0f)
+        moveDirection = glm::normalize(moveDirection);
+
+    m_transform.position += moveDirection * m_speed * deltaTime;
+
+    if (Input::getCursorMode() == CURSOR_DISABLED)
+    {
+        float mouseX = Input::getMouseX();
+        float mouseY = Input::getMouseY();
+
+        float offsetX = mouseX - m_lastX;
+        float offsetY = m_lastY - mouseY; // reversed since y-coordinates go
+
+        m_lastX = mouseX;
+        m_lastY = mouseY;
+
+        m_transform.rotation.y += offsetX * m_sensitivity;
+        m_transform.rotation.x += offsetY * m_sensitivity;
+
+        if (m_transform.rotation.x > 89.0f)
+            m_transform.rotation.x = 89.0f;
+        if (m_transform.rotation.x < -89.0f)
+            m_transform.rotation.x = -89.0f;
+    }
+}
