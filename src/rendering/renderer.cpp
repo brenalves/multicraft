@@ -9,6 +9,9 @@ void Renderer::initialize()
         throw std::runtime_error("Failed to initialize GLAD library");
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
     setDrawMode(DrawMode::FILL);
 }
 

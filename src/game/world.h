@@ -3,13 +3,15 @@
 #include <glm/glm.hpp>
 #include <stdexcept>
 #include <unordered_map>
+#include <list>
 
 #include "chunk.h"
 #include "player.h"
 
 #define WORLD_INITIAL_SIZE 5
-#define RENDER_DISTANCE 4
-#define UNLOAD_DISTANCE 6
+#define RENDER_DISTANCE 6
+#define UNLOAD_DISTANCE 16
+#define MAX_CHUNKS_PER_FRAME 1
 
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2& v) const noexcept {
@@ -34,7 +36,11 @@ public:
     static inline World* getInstance() { return s_instance; }
 
 private:
+    void updateChunks();
+
+private:
     std::unordered_map<glm::ivec2, Chunk*, IVec2Hash> m_chunks;
+    std::unordered_map<glm::ivec2, Chunk*, IVec2Hash> m_chunksToGenerateMesh;
 
     Player* m_player;
     

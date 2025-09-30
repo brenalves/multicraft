@@ -12,11 +12,15 @@ void Player::update(float deltaTime)
 {
     m_transform.update();
 
+    glm::vec3 front = m_transform.forward;
+    front.y = 0.0f; // lock y movement for horizontal movement
+    front = glm::normalize(front);
+
     glm::vec3 moveDirection(0.0f);
     if (Input::isKeyHeld(GLFW_KEY_W))
-        moveDirection += m_transform.forward;
+        moveDirection += front;
     if (Input::isKeyHeld(GLFW_KEY_S))
-        moveDirection += -m_transform.forward;
+        moveDirection += -front;
     if (Input::isKeyHeld(GLFW_KEY_A))
         moveDirection += -m_transform.right;
     if (Input::isKeyHeld(GLFW_KEY_D))

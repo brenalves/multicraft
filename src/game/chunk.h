@@ -5,7 +5,9 @@
 #include "components/material.h"
 #include "core/resourcemanager.h"
 
-#define CHUNK_SIZE 16
+#define CHUNK_SIZE_X 16
+#define CHUNK_SIZE_Y 256
+#define CHUNK_SIZE_Z 16
 #define ATLAS_SIZE 256
 #define TILE_SIZE 16
 
@@ -42,5 +44,5 @@ private:
     Mesh* m_mesh;
     Material m_material;
 
-    BlockType m_blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+    BlockType m_blocks[CHUNK_SIZE_X][CHUNK_SIZE_Y][CHUNK_SIZE_Z];
 };

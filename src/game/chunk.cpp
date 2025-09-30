@@ -7,11 +7,11 @@ Chunk::Chunk(glm::vec3 position)
 {
     m_transform.position = position;
 
-    for (int x = 0; x < CHUNK_SIZE; ++x)
+    for (int x = 0; x < CHUNK_SIZE_X; ++x)
     {
-        for (int y = 0; y < CHUNK_SIZE; ++y)
+        for (int y = 0; y < CHUNK_SIZE_Y; ++y)
         {
-            for (int z = 0; z < CHUNK_SIZE; ++z)
+            for (int z = 0; z < CHUNK_SIZE_Z; ++z)
             {
                 // if(y == 0)
                 //     m_blocks[x][y][z] = BLOCK_BEDROCK;
@@ -27,7 +27,7 @@ Chunk::Chunk(glm::vec3 position)
                 //     m_blocks[x][y][z] = BLOCK_AIR;
 
                 // apply sine wave pattern
-                float height = (std::sin((x + position.x) * 0.3f) + std::cos((z + position.z) * 0.3f)) * 2.0f + 8.0f;
+                float height = (std::sin((x + position.x) * 0.3f) + std::cos((z + position.z) * 0.3f)) * 6.0f + 16.0f;
                 if (y < height - 1)
                     m_blocks[x][y][z] = BLOCK_DIRT;
                 else if (y < height)
@@ -55,7 +55,7 @@ Chunk::~Chunk()
 
 BlockType Chunk::getBlock(int x, int y, int z)
 {
-    if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
+    if (x < 0 || x >= CHUNK_SIZE_X || y < 0 || y >= CHUNK_SIZE_Y || z < 0 || z >= CHUNK_SIZE_Z)
         return BLOCK_AIR;
 
     return m_blocks[x][y][z];
@@ -66,11 +66,11 @@ void Chunk::generateMesh()
     std::vector<float> vertices;
     std::vector<unsigned int> indices;
 
-    for (int x = 0; x < CHUNK_SIZE; x++)
+    for (int x = 0; x < CHUNK_SIZE_X; x++)
     {
-        for (int y = 0; y < CHUNK_SIZE; y++)
+        for (int y = 0; y < CHUNK_SIZE_Y; y++)
         {
-            for (int z = 0; z < CHUNK_SIZE; z++)
+            for (int z = 0; z < CHUNK_SIZE_Z; z++)
             {
                 if (m_blocks[x][y][z] == BLOCK_AIR)
                     continue;
@@ -114,41 +114,41 @@ void Chunk::generateMesh()
                     case 1: // Bottom (-Y)
                         vertices.insert(vertices.end(), {
                             vx,     vy, vz,     u0, v1, // top-left
-                            vx + 1, vy, vz,     u1, v1, // top-right
+                            vx,     vy, vz + 1, u0, v0, // bottom-left
                             vx + 1, vy, vz + 1, u1, v0, // bottom-right
-                            vx,     vy, vz + 1, u0, v0  // bottom-left
+                            vx + 1, vy, vz,     u1, v1  // top-right
                         });
                         break;
                     case 2: // Left (-X)
                         vertices.insert(vertices.end(), {
-                            vx, vy,     vz,     u0, v0, // top-right
-                            vx, vy + 1, vz,     u0, v1, // bottom-right
-                            vx, vy + 1, vz + 1, u1, v1, // bottom-left
-                            vx, vy,     vz + 1, u1, v0  // top-left
+                            vx, vy,     vz,     u0, v0, // bottom-left
+                            vx, vy + 1, vz,     u0, v1, // top-left
+                            vx, vy + 1, vz + 1, u1, v1, // top-right
+                            vx, vy,     vz + 1, u1, v0  // bottom-right
                         });
                         break;
                     case 3: // Right (+X)
                         vertices.insert(vertices.end(), {
-                            vx + 1, vy,     vz,     u0, v0, // top-left
-                            vx + 1, vy + 1, vz,     u0, v1, // bottom-left
-                            vx + 1, vy + 1, vz + 1, u1, v1, // bottom-right
-                            vx + 1, vy,     vz + 1, u1, v0  // top-right
+                            vx + 1, vy,     vz,     u0, v0, // bottom-left
+                            vx + 1, vy,     vz + 1, u1, v0, // bottom-right
+                            vx + 1, vy + 1, vz + 1, u1, v1, // top-right
+                            vx + 1, vy + 1, vz,     u0, v1  // top-left
                         });
                         break;
                     case 4: // Front (-Z)
                         vertices.insert(vertices.end(), {
-                            vx,     vy,     vz,     u0, v0, // top-right
-                            vx + 1, vy,     vz,     u1, v0, // top-left
-                            vx + 1, vy + 1, vz,     u1, v1, // bottom-left
-                            vx,     vy + 1, vz,     u0, v1  // bottom-right
+                            vx,     vy,     vz,     u0, v0, // bottom-left
+                            vx + 1, vy,     vz,     u1, v0,  // bottom-right
+                            vx + 1, vy + 1, vz,     u1, v1, // top-right
+                            vx,     vy + 1, vz,     u0, v1 // top-left
                         });
                         break;
                     case 5: // Back (+Z)
                         vertices.insert(vertices.end(), {
-                            vx,     vy,     vz + 1, u0, v0, // top-left
-                            vx + 1, vy,     vz + 1, u1, v0, // top-right
-                            vx + 1, vy + 1, vz + 1, u1, v1, // bottom-right
-                            vx,     vy + 1, vz + 1, u0, v1  // bottom-left
+                            vx,     vy,     vz + 1, u0, v0, // bottom-left
+                            vx,     vy + 1, vz + 1, u0, v1, // top-left
+                            vx + 1, vy + 1, vz + 1, u1, v1, // top-right
+                            vx + 1, vy,     vz + 1, u1, v0  // bottom-right
                         });
                         break;
                     }
@@ -173,17 +173,17 @@ bool Chunk::verifyVisibility(int x, int y, int z)
     // Check neighboring chunks for edge blocks
     bool neighborVisibility = false;
 
-    if(x > 0 && x < CHUNK_SIZE && z > 0 && z < CHUNK_SIZE)
+    if(x > 0 && x < CHUNK_SIZE_X && z > 0 && z < CHUNK_SIZE_Z)
         neighborVisibility = true;
     else
     {
         auto neighbor = World::getInstance()->getChunk(glm::ivec2(
-            m_transform.position.x / CHUNK_SIZE + (x < 0 ? -1 : (x >= CHUNK_SIZE ? 1 : 0)),
-            m_transform.position.z / CHUNK_SIZE + (z < 0 ? -1 : (z >= CHUNK_SIZE ? 1 : 0))
+            m_transform.position.x / CHUNK_SIZE_X + (x < 0 ? -1 : (x >= CHUNK_SIZE_X ? 1 : 0)),
+            m_transform.position.z / CHUNK_SIZE_Z + (z < 0 ? -1 : (z >= CHUNK_SIZE_Z ? 1 : 0))
         ));
 
         if(neighbor)
-            neighborVisibility = neighbor->getBlock((x + CHUNK_SIZE) % CHUNK_SIZE, y, (z + CHUNK_SIZE) % CHUNK_SIZE) == BLOCK_AIR;
+            neighborVisibility = neighbor->getBlock((x + CHUNK_SIZE_X) % CHUNK_SIZE_X, y, (z + CHUNK_SIZE_Z) % CHUNK_SIZE_Z) == BLOCK_AIR;
         else
             neighborVisibility = true; // If neighbor chunk doesn't exist, consider it visible
     }

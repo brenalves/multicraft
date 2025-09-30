@@ -24,8 +24,8 @@ App::App()
 
     ResourceManager::loadShader("basic", "assets/shaders/vs.glsl", "assets/shaders/fs.glsl");
     ResourceManager::loadShader("chunk", "assets/shaders/chunk.vert", "assets/shaders/chunk.frag");
- 
-    auto& atlas = ResourceManager::loadTexture("atlas", "assets/textures/atlas.png");
+
+    auto &atlas = ResourceManager::loadTexture("atlas", "assets/textures/atlas.png");
     atlas.setFilterMode(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
     ResourceManager::loadTexture("container", "assets/textures/box.jpg");
 
@@ -48,8 +48,10 @@ void App::run()
     Cube cube;
     World world;
 
+    Input::setCursorMode(CURSOR_NORMAL);
+
     double lastTime = glfwGetTime();
-    
+
     while (m_running)
     {
         double currentTime = glfwGetTime();
@@ -66,17 +68,17 @@ void App::run()
         }
 
         Input::update();
-        
+
         // update here
         if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
             close();
 
-        if(Input::isKeyPressed(GLFW_KEY_F3))
+        if (Input::isKeyPressed(GLFW_KEY_F3))
             Input::setCursorMode(Input::getCursorMode() == CURSOR_DISABLED ? CURSOR_NORMAL : CURSOR_DISABLED);
 
-        if(Input::isKeyPressed(GLFW_KEY_1))
+        if (Input::isKeyPressed(GLFW_KEY_1))
             Renderer::setDrawMode(DrawMode::FILL);
-        if(Input::isKeyPressed(GLFW_KEY_2))
+        if (Input::isKeyPressed(GLFW_KEY_2))
             Renderer::setDrawMode(DrawMode::LINE);
 
         quad.update(deltaTime);
@@ -86,14 +88,14 @@ void App::run()
         Renderer::clear();
 
         // render here
-        auto& player = world.getPlayer();
+        auto &player = world.getPlayer();
         Renderer::setCamera(player.getCamera(), player.getTransform());
 
         Renderer::draw(quad.getTransform(), quad.getMaterial(), quad.getMesh());
         Renderer::draw(cube.getTransform(), cube.getMaterial(), cube.getMesh());
 
-        auto& chunks = world.getChunks();
-        for(auto& pair : chunks)
+        auto &chunks = world.getChunks();
+        for (auto &pair : chunks)
             Renderer::drawChunk(pair.second->getTransform(), pair.second->getMesh());
 
         m_window->update();
