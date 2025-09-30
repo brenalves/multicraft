@@ -12,6 +12,11 @@ public:
 
     void update();
 
+    inline int getWidth() const { return m_width; }
+    inline int getHeight() const { return m_height; }
+
+    void setTitle(const char* title);
+
 private:
     GLFWwindow* m_ptr;
     int m_width;

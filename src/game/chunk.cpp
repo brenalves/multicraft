@@ -1,5 +1,7 @@
 #include "chunk.h"
 
+#include "world.h"
+
 Chunk::Chunk(glm::vec3 position)
     : m_material(ResourceManager::getShader("chunk"))
 {
@@ -11,14 +13,27 @@ Chunk::Chunk(glm::vec3 position)
         {
             for (int z = 0; z < CHUNK_SIZE; ++z)
             {
-                if(y == 0)
-                    m_blocks[x][y][z] = BLOCK_BEDROCK;
-                else if (y < 5)
-                    m_blocks[x][y][z] = BLOCK_STONE;
-                else if (y == 5)
+                // if(y == 0)
+                //     m_blocks[x][y][z] = BLOCK_BEDROCK;
+                // else if (y == 2)
+                //     m_blocks[x][y][z] = BLOCK_DIAMOND;
+                // else if (y < 5)
+                //     m_blocks[x][y][z] = BLOCK_STONE;
+                // else if (y == 5)
+                //     m_blocks[x][y][z] = BLOCK_DIRT;
+                // else if (y == 6)
+                //     m_blocks[x][y][z] = BLOCK_GRASS;
+                // else
+                //     m_blocks[x][y][z] = BLOCK_AIR;
+
+                // apply sine wave pattern
+                float height = (std::sin((x + position.x) * 0.3f) + std::cos((z + position.z) * 0.3f)) * 2.0f + 8.0f;
+                if (y < height - 1)
                     m_blocks[x][y][z] = BLOCK_DIRT;
-                else if (y == 6)
+                else if (y < height)
                     m_blocks[x][y][z] = BLOCK_GRASS;
+                else if (y == 0)
+                    m_blocks[x][y][z] = BLOCK_BEDROCK;
                 else
                     m_blocks[x][y][z] = BLOCK_AIR;
             }
@@ -30,8 +45,6 @@ Chunk::Chunk(glm::vec3 position)
     layout.push<float>(2, false); // uv
 
     m_mesh = new Mesh(layout);
-    generateMesh();
-
     m_material.setDiffuseMap(&ResourceManager::getTexture("atlas"));
 }
 
@@ -154,7 +167,28 @@ void Chunk::generateMesh()
 
 bool Chunk::verifyVisibility(int x, int y, int z)
 {
-    return getBlock(x, y, z) == BLOCK_AIR;
+    // Check bounds and internal visibility
+    bool localVisibility = getBlock(x, y, z) == BLOCK_AIR;
+
+    // Check neighboring chunks for edge blocks
+    bool neighborVisibility = false;
+
+    if(x > 0 && x < CHUNK_SIZE && z > 0 && z < CHUNK_SIZE)
+        neighborVisibility = true;
+    else
+    {
+        auto neighbor = World::getInstance()->getChunk(glm::ivec2(
+            m_transform.position.x / CHUNK_SIZE + (x < 0 ? -1 : (x >= CHUNK_SIZE ? 1 : 0)),
+            m_transform.position.z / CHUNK_SIZE + (z < 0 ? -1 : (z >= CHUNK_SIZE ? 1 : 0))
+        ));
+
+        if(neighbor)
+            neighborVisibility = neighbor->getBlock((x + CHUNK_SIZE) % CHUNK_SIZE, y, (z + CHUNK_SIZE) % CHUNK_SIZE) == BLOCK_AIR;
+        else
+            neighborVisibility = true; // If neighbor chunk doesn't exist, consider it visible
+    }
+
+    return localVisibility && neighborVisibility;
 }
 
 glm::vec2 Chunk::getUV(BlockType type, int face)

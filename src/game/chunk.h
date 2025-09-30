@@ -25,6 +25,8 @@ public:
     Chunk(glm::vec3 position);
     ~Chunk();
 
+    void generateMesh();
+
     BlockType getBlock(int x, int y, int z);
 
     inline Transform& getTransform() { return m_transform; }
@@ -32,7 +34,6 @@ public:
     inline Material& getMaterial() { return m_material; }
 
 private:
-    void generateMesh();
     bool verifyVisibility(int x, int y, int z);
     glm::vec2 getUV(BlockType type, int face);
 

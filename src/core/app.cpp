@@ -1,6 +1,5 @@
 #include "app.h"
 
-#include "game/player.h"
 #include "game/quad.h"
 #include "game/cube.h"
 #include "game/world.h"
@@ -45,7 +44,6 @@ App::~App()
 
 void App::run()
 {
-    Player player;
     Quad quad;
     Cube cube;
     World world;
@@ -57,6 +55,15 @@ void App::run()
         double currentTime = glfwGetTime();
         float deltaTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
+
+        // update window title with fps every 1s
+        static double fpsTimer = 0.0;
+        fpsTimer += deltaTime;
+        if (fpsTimer >= 1.0)
+        {
+            m_window->setTitle(("Multicraft - FPS: " + std::to_string(static_cast<int>(1.0f / deltaTime))).c_str());
+            fpsTimer = 0.0;
+        }
 
         Input::update();
         
@@ -73,20 +80,21 @@ void App::run()
             Renderer::setDrawMode(DrawMode::LINE);
 
         quad.update(deltaTime);
-        player.update(deltaTime);
         cube.update(deltaTime);
         world.update(deltaTime);
 
         Renderer::clear();
 
         // render here
+        auto& player = world.getPlayer();
         Renderer::setCamera(player.getCamera(), player.getTransform());
 
         Renderer::draw(quad.getTransform(), quad.getMaterial(), quad.getMesh());
         Renderer::draw(cube.getTransform(), cube.getMaterial(), cube.getMesh());
 
-        auto& chunk = world.getChunk();
-        Renderer::drawChunk(chunk.getTransform(), chunk.getMesh());
+        auto& chunks = world.getChunks();
+        for(auto& pair : chunks)
+            Renderer::drawChunk(pair.second->getTransform(), pair.second->getMesh());
 
         m_window->update();
     }

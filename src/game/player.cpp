@@ -2,7 +2,7 @@
 
 Player::Player()
 {
-    m_speed = 5.0f;
+    m_speed = 25.0f;
     m_lastX = 400.0f; // assuming initial window width / 2
     m_lastY = 300.0f; // assuming initial window height / 2
     m_sensitivity = 0.1f;

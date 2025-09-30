@@ -15,7 +15,12 @@ Window::Window(int width, int height, const char *title)
 
     glfwMakeContextCurrent(m_ptr);
 
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    glfwSetWindowPos(m_ptr, (mode->width - width) / 2, (mode->height - height) / 2);
+
     glfwSwapInterval(0);
+
+    glfwSetWindowUserPointer(m_ptr, this);
 
     glfwFocusWindow(m_ptr);
 
@@ -24,10 +29,15 @@ Window::Window(int width, int height, const char *title)
     });
 
     glfwSetWindowFocusCallback(m_ptr, [](GLFWwindow* window, int focused) {
+        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
         if(focused)
             Input::setCursorMode(CURSOR_DISABLED);
         else
             Input::setCursorMode(CURSOR_NORMAL);
+
+        // recenter the cursor to window center
+        glfwSetCursorPos(window, win->getWidth() / 2, win->getHeight() / 2);
     });
 }
 
@@ -41,4 +51,10 @@ void Window::update()
 {
     glfwSwapBuffers(m_ptr);
     glfwPollEvents();
+}
+
+void Window::setTitle(const char *title)
+{
+    m_title = title;
+    glfwSetWindowTitle(m_ptr, title);
 }
