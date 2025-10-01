@@ -2,6 +2,8 @@
 
 bool Input::s_currentKeys[GLFW_KEY_LAST];
 bool Input::s_previousKeys[GLFW_KEY_LAST];
+bool Input::s_currentMouseButtons[GLFW_MOUSE_BUTTON_LAST];
+bool Input::s_previousMouseButtons[GLFW_MOUSE_BUTTON_LAST];
 
 void Input::initialize()
 {
@@ -20,6 +22,12 @@ void Input::update()
     {
         s_previousKeys[i] = s_currentKeys[i];
         s_currentKeys[i] = glfwGetKey(glfwGetCurrentContext(), i) == GLFW_PRESS;
+
+        if(i < GLFW_MOUSE_BUTTON_LAST)
+        {
+            s_previousMouseButtons[i] = s_currentMouseButtons[i];
+            s_currentMouseButtons[i] = glfwGetMouseButton(glfwGetCurrentContext(), i) == GLFW_PRESS;
+        }
     }
 }
 

@@ -29,6 +29,30 @@ void World::update(float deltaTime)
     updateChunks();
 }
 
+void World::breakBlock(const glm::ivec3 &blockPos)
+{
+    Chunk *chunk = getChunk(glm::ivec2(blockPos.x / CHUNK_SIZE_X, blockPos.z / CHUNK_SIZE_Z));
+    if (!chunk)
+        return;
+
+    glm::ivec3 localPos = glm::ivec3(
+        (blockPos.x % CHUNK_SIZE_X + CHUNK_SIZE_X) % CHUNK_SIZE_X,
+        blockPos.y,
+        (blockPos.z % CHUNK_SIZE_Z + CHUNK_SIZE_Z) % CHUNK_SIZE_Z
+    );
+
+    if (localPos.y < 0 || localPos.y >= CHUNK_SIZE_Y)
+        return;
+    
+    if (chunk->getBlock(localPos.x, localPos.y, localPos.z) == BLOCK_AIR)
+        return;
+
+    // set block to air
+    chunk->setBlock(localPos.x, localPos.y, localPos.z, BLOCK_AIR);
+    // mark chunk for mesh regeneration
+    m_chunksToGenerateMesh[glm::ivec2(blockPos.x / CHUNK_SIZE_X, blockPos.z / CHUNK_SIZE_Z)] = chunk;
+}
+
 void World::updateChunks()
 {
     // load new chunks around player based on RENDER_DISTANCE

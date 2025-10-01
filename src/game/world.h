@@ -29,6 +29,8 @@ public:
 
     void update(float deltaTime);
 
+    void breakBlock(const glm::ivec3& blockPos);
+
     inline Chunk* getChunk(const glm::ivec2& position) { return m_chunks.find(position) != m_chunks.end() ? m_chunks[position] : nullptr; }
     inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getChunks() { return m_chunks; }
     inline Player& getPlayer() { return *m_player; }

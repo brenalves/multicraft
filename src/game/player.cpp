@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include "world.h"
+
 Player::Player()
 {
     m_speed = 25.0f;
@@ -41,7 +43,7 @@ void Player::update(float deltaTime)
         float mouseY = Input::getMouseY();
 
         float offsetX = mouseX - m_lastX;
-        float offsetY = m_lastY - mouseY; // reversed since y-coordinates go
+        float offsetY = m_lastY - mouseY;
 
         m_lastX = mouseX;
         m_lastY = mouseY;
@@ -53,5 +55,15 @@ void Player::update(float deltaTime)
             m_transform.rotation.x = 89.0f;
         if (m_transform.rotation.x < -89.0f)
             m_transform.rotation.x = -89.0f;
+
+        if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
+        {
+            // break block
+            for(int i = 1; i < 6; i++)
+            {
+                glm::vec3 checkPos = m_transform.position + m_transform.forward * static_cast<float>(i);
+                World::getInstance()->breakBlock(glm::ivec3(std::floor(checkPos.x), std::floor(checkPos.y), std::floor(checkPos.z)));
+            }
+        }
     }
 }

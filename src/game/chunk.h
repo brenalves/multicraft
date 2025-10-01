@@ -30,6 +30,7 @@ public:
     void generateMesh();
 
     BlockType getBlock(int x, int y, int z);
+    inline void setBlock(int x, int y, int z, BlockType type) { m_blocks[x][y][z] = type; }
 
     inline Transform& getTransform() { return m_transform; }
     inline Mesh& getMesh() { return *m_mesh; }
