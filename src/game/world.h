@@ -10,7 +10,7 @@
 
 #define WORLD_INITIAL_SIZE 5
 #define RENDER_DISTANCE 6
-#define UNLOAD_DISTANCE 16
+#define UNLOAD_DISTANCE 10
 #define MAX_CHUNKS_PER_FRAME 1
 
 struct IVec2Hash {
