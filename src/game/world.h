@@ -3,14 +3,14 @@
 #include <glm/glm.hpp>
 #include <stdexcept>
 #include <unordered_map>
-#include <list>
+#include <queue>
 
 #include "chunk.h"
 #include "player.h"
 
 #define WORLD_INITIAL_SIZE 5
-#define RENDER_DISTANCE 6
-#define UNLOAD_DISTANCE 10
+#define RENDER_DISTANCE 8
+#define UNLOAD_DISTANCE 16
 #define MAX_CHUNKS_PER_FRAME 1
 
 struct IVec2Hash {
@@ -29,9 +29,8 @@ public:
 
     void update(float deltaTime);
 
-    void breakBlock(const glm::ivec3& blockPos);
+    Chunk* getChunk(glm::ivec2 position);
 
-    inline Chunk* getChunk(const glm::ivec2& position) { return m_chunks.find(position) != m_chunks.end() ? m_chunks[position] : nullptr; }
     inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getChunks() { return m_chunks; }
     inline Player& getPlayer() { return *m_player; }
 
@@ -42,7 +41,7 @@ private:
 
 private:
     std::unordered_map<glm::ivec2, Chunk*, IVec2Hash> m_chunks;
-    std::unordered_map<glm::ivec2, Chunk*, IVec2Hash> m_chunksToGenerateMesh;
+    std::queue<glm::ivec2> m_chunksToGenerate;
 
     Player* m_player;
     

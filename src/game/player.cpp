@@ -59,11 +59,6 @@ void Player::update(float deltaTime)
         if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
             // break block
-            for(int i = 1; i < 6; i++)
-            {
-                glm::vec3 checkPos = m_transform.position + m_transform.forward * static_cast<float>(i);
-                World::getInstance()->breakBlock(glm::ivec3(std::floor(checkPos.x), std::floor(checkPos.y), std::floor(checkPos.z)));
-            }
         }
     }
 }

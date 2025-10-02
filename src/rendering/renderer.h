@@ -29,7 +29,7 @@ public:
 
     static void setCamera(Camera& camera, Transform& cameraTransform);
     static void draw(Transform& transform, Material& material, Mesh& mesh);
-    static void drawChunk(Transform& transform, Mesh& mesh);
+    static void drawChunk(const glm::vec3& position, Mesh& mesh);
 
     static void setDrawMode(DrawMode mode) { glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLenum>(mode)); }
 

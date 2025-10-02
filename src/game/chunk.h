@@ -24,7 +24,7 @@ enum BlockType
 class Chunk
 {
 public:
-    Chunk(glm::vec3 position);
+    Chunk(glm::ivec2 position);
     ~Chunk();
 
     void generateMesh();
@@ -32,18 +32,18 @@ public:
     BlockType getBlock(int x, int y, int z);
     inline void setBlock(int x, int y, int z, BlockType type) { m_blocks[x][y][z] = type; }
 
-    inline Transform& getTransform() { return m_transform; }
+    inline glm::ivec2 getPosition() { return m_position; }
     inline Mesh& getMesh() { return *m_mesh; }
-    inline Material& getMaterial() { return m_material; }
+    
 
 private:
     bool verifyVisibility(int x, int y, int z);
     glm::vec2 getUV(BlockType type, int face);
 
 private:
-    Transform m_transform;
+    glm::ivec2 m_position;
+
     Mesh* m_mesh;
-    Material m_material;
 
     BlockType m_blocks[CHUNK_SIZE_X][CHUNK_SIZE_Y][CHUNK_SIZE_Z];
 };

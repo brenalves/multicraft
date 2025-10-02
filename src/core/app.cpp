@@ -96,7 +96,10 @@ void App::run()
 
         auto &chunks = world.getChunks();
         for (auto &pair : chunks)
-            Renderer::drawChunk(pair.second->getTransform(), pair.second->getMesh());
+        {
+            glm::vec3 position = glm::vec3(pair.first.x * CHUNK_SIZE_X, 0.0f, pair.first.y * CHUNK_SIZE_Z);
+            Renderer::drawChunk(position, pair.second->getMesh());
+        }
 
         m_window->update();
     }

@@ -52,7 +52,7 @@ void Renderer::draw(Transform& transform, Material &material, Mesh &mesh)
     glDrawElements(GL_TRIANGLES, mesh.getIB().getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void Renderer::drawChunk(Transform &transform, Mesh &mesh)
+void Renderer::drawChunk(const glm::vec3& position, Mesh &mesh)
 {
     static Shader& shader = ResourceManager::getShader("chunk");
     shader.bind();
@@ -60,7 +60,10 @@ void Renderer::drawChunk(Transform &transform, Mesh &mesh)
 
     shader.setUniformMat4("uProjectionMatrix", glm::value_ptr(m_currentProjectionMatrix));
     shader.setUniformMat4("uViewMatrix", glm::value_ptr(m_currentViewMatrix));
-    shader.setUniformMat4("uModelMatrix", glm::value_ptr(transform.getModelMatrix()));
+
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), position);
+
+    shader.setUniformMat4("uModelMatrix", glm::value_ptr(model));
 
     ResourceManager::getTexture("atlas").bind(0);
     shader.setUniform1i("uAtlas", 0);
