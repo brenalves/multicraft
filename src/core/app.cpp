@@ -1,7 +1,5 @@
 #include "app.h"
 
-#include "game/quad.h"
-#include "game/cube.h"
 #include "game/world.h"
 
 App *App::s_instance = nullptr;
@@ -24,6 +22,7 @@ App::App()
 
     ResourceManager::loadShader("basic", "assets/shaders/vs.glsl", "assets/shaders/fs.glsl");
     ResourceManager::loadShader("chunk", "assets/shaders/chunk.vert", "assets/shaders/chunk.frag");
+    ResourceManager::loadShader("ray", "assets/shaders/ray.vert", "assets/shaders/ray.frag");
 
     auto &atlas = ResourceManager::loadTexture("atlas", "assets/textures/atlas.png");
     atlas.setFilterMode(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
@@ -44,8 +43,6 @@ App::~App()
 
 void App::run()
 {
-    Quad quad;
-    Cube cube;
     World world;
 
     Input::setCursorMode(CURSOR_NORMAL);
@@ -81,8 +78,6 @@ void App::run()
         if (Input::isKeyPressed(GLFW_KEY_2))
             Renderer::setDrawMode(DrawMode::LINE);
 
-        quad.update(deltaTime);
-        cube.update(deltaTime);
         world.update(deltaTime);
 
         Renderer::clear();
@@ -90,9 +85,6 @@ void App::run()
         // render here
         auto &player = world.getPlayer();
         Renderer::setCamera(player.getCamera(), player.getTransform());
-
-        Renderer::draw(quad.getTransform(), quad.getMaterial(), quad.getMesh());
-        Renderer::draw(cube.getTransform(), cube.getMaterial(), cube.getMesh());
 
         auto &chunks = world.getChunks();
         for (auto &pair : chunks)

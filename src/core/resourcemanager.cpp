@@ -14,6 +14,9 @@ void ResourceManager::shutdown()
 
     for (auto& pair : s_textures)
         delete pair.second;
+
+    for (auto& pair : s_loadedMeshes)
+        delete pair.second;
 }
 
 Shader& ResourceManager::loadShader(const std::string &name, const std::string &vertexPath, const std::string &fragmentPath)
@@ -50,4 +53,24 @@ Texture& ResourceManager::getTexture(const std::string &name)
         throw std::runtime_error("Texture with name '" + name + "' not found");
 
     return *s_textures[name];
+}
+
+Mesh &ResourceManager::loadMesh(const std::string &name, const void *vertices, unsigned int vertexSize, const unsigned int *indices, unsigned int indexSize, BufferLayout &layout)
+{
+    if (s_loadedMeshes.find(name) != s_loadedMeshes.end())
+        throw std::runtime_error("Mesh with name '" + name + "' already exists");
+
+    Mesh* mesh = new Mesh(layout);
+    mesh->setVertices(vertices, vertexSize);
+    mesh->setIndices(indices, indexSize);
+    s_loadedMeshes[name] = mesh;
+    return *mesh;
+}
+
+Mesh &ResourceManager::getMesh(const std::string &name)
+{
+    if (s_loadedMeshes.find(name) == s_loadedMeshes.end())
+        throw std::runtime_error("Mesh with name '" + name + "' not found");
+
+    return *s_loadedMeshes[name];
 }
