@@ -59,6 +59,39 @@ void Player::update(float deltaTime)
         if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
             // break block
+            for(float i = 0.0f; i < 5.0f; i += 0.1f)
+            {
+                glm::vec3 rayOrigin = m_transform.position;
+                glm::vec3 rayDirection = m_transform.forward;
+
+                glm::vec3 rayPos = rayOrigin + rayDirection * i;
+
+                int blockX = static_cast<int>(std::floor(rayPos.x));
+                int blockY = static_cast<int>(std::floor(rayPos.y));
+                int blockZ = static_cast<int>(std::floor(rayPos.z));
+
+                if(World::getInstance()->breakBlock(blockX, blockY, blockZ))
+                    break;
+            }
+        }
+
+        if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+        {
+            // place block
+            for(float i = 0.0f; i < 5.0f; i += 0.1f)
+            {
+                glm::vec3 rayOrigin = m_transform.position;
+                glm::vec3 rayDirection = m_transform.forward;
+
+                glm::vec3 rayPos = rayOrigin + rayDirection * i;
+
+                int blockX = static_cast<int>(std::floor(rayPos.x));
+                int blockY = static_cast<int>(std::floor(rayPos.y));
+                int blockZ = static_cast<int>(std::floor(rayPos.z));
+
+                if(World::getInstance()->placeBlock(blockX, blockY, blockZ, BLOCK_STONE))
+                    break;
+            }
         }
     }
 }

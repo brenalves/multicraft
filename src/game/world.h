@@ -29,6 +29,9 @@ public:
 
     void update(float deltaTime);
 
+    bool breakBlock(int x, int y, int z);
+    bool placeBlock(int x, int y, int z, BlockType type);
+
     Chunk* getChunk(glm::ivec2 position);
 
     inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getChunks() { return m_chunks; }

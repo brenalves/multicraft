@@ -30,13 +30,43 @@ void Renderer::setCamera(Camera& camera, Transform& cameraTransform)
     m_currentViewMatrix = glm::lookAt(cameraTransform.position, cameraTransform.position + cameraTransform.forward, cameraTransform.up);
 }
 
-void Renderer::drawRay(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color, float lineWidth)
+void Renderer::drawRay(const glm::vec3 &start, const glm::vec3 &direction, float length, const glm::vec3 &color, float lineWidth)
 {
     Shader& shader = ResourceManager::getShader("ray");
     shader.bind();
 
+    shader.setUniform3fv("uColor", glm::value_ptr(color));
+
+    glm::vec3 end = start + direction * length;
+
+    float vertices[] = {
+        start.x, start.y, start.z,
+        end.x, end.y, end.z
+    };
+    unsigned int indices[] = {
+        0, 1
+    };
+    BufferLayout layout;
+    layout.push<float>(3, false);
+    VertexArray va;
+    VertexBuffer vb;
+    IndexBuffer ib;
+    vb.setData(vertices, sizeof(vertices));
+    ib.setData(indices, sizeof(indices));
+    va.addBuffer(vb, layout);
+
+    va.bind();
+    ib.bind();
+    glLineWidth(lineWidth);
+
+    shader.setUniformMat4("uProjectionMatrix", glm::value_ptr(m_currentProjectionMatrix));
+    shader.setUniformMat4("uViewMatrix", glm::value_ptr(m_currentViewMatrix));
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, start);
+    shader.setUniformMat4("uModelMatrix", glm::value_ptr(model));
+
+    glDrawElements(GL_LINES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 void Renderer::drawChunk(const glm::vec3 &position, Mesh &mesh)

@@ -29,6 +29,77 @@ void World::update(float deltaTime)
     updateChunks();
 }
 
+bool World::breakBlock(int x, int y, int z)
+{
+    glm::ivec2 chunkPos = glm::ivec2(
+        static_cast<int>(std::floor(x / static_cast<float>(CHUNK_SIZE_X))),
+        static_cast<int>(std::floor(z / static_cast<float>(CHUNK_SIZE_Z))));
+
+    Chunk *chunk = World::getInstance()->getChunk(chunkPos);
+    if (!chunk)
+        return false;
+
+    int localX = (x % CHUNK_SIZE_X + CHUNK_SIZE_X) % CHUNK_SIZE_X;
+    int localY = y;
+    int localZ = (z % CHUNK_SIZE_Z + CHUNK_SIZE_Z) % CHUNK_SIZE_Z;
+
+    if (chunk->getBlock(localX, localY, localZ) == BLOCK_AIR)
+        return false;
+
+    chunk->setBlock(localX, localY, localZ, BLOCK_AIR);
+    m_chunksToGenerate.push(chunkPos);
+
+    // add neighbor chunks to regenerate mesh if the broken block is at the edge of the chunk
+    if (localX == 0)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x - 1, chunkPos.y));
+    else if (localX == CHUNK_SIZE_X - 1)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x + 1, chunkPos.y));
+
+    if (localZ == 0)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x, chunkPos.y - 1));
+    else if (localZ == CHUNK_SIZE_Z - 1)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x, chunkPos.y + 1));
+
+    return true;
+}
+
+bool World::placeBlock(int x, int y, int z, BlockType type)
+{
+    glm::ivec2 chunkPos = glm::ivec2(
+        static_cast<int>(std::floor(x / static_cast<float>(CHUNK_SIZE_X))),
+        static_cast<int>(std::floor(z / static_cast<float>(CHUNK_SIZE_Z))));
+
+    Chunk *chunk = World::getInstance()->getChunk(chunkPos);
+    if (!chunk)
+        return false;
+
+    int localX = (x % CHUNK_SIZE_X + CHUNK_SIZE_X) % CHUNK_SIZE_X;
+    int localY = y;
+    int localZ = (z % CHUNK_SIZE_Z + CHUNK_SIZE_Z) % CHUNK_SIZE_Z;
+
+    if (chunk->getBlock(localX, localY, localZ) != BLOCK_AIR)
+        return false;
+
+    // get normal of the face being looked at
+    // place block in front of that face
+
+    chunk->setBlock(localX, localY, localZ, type);
+    m_chunksToGenerate.push(chunkPos);
+
+    // add neighbor chunks to regenerate mesh if the placed block is at the edge of the chunk
+    if (localX == 0)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x - 1, chunkPos.y));
+    else if (localX == CHUNK_SIZE_X - 1)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x + 1, chunkPos.y));
+
+    if (localZ == 0)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x, chunkPos.y - 1));
+    else if (localZ == CHUNK_SIZE_Z - 1)
+        m_chunksToGenerate.push(glm::ivec2(chunkPos.x, chunkPos.y + 1));
+
+    return true;
+}
+
 Chunk *World::getChunk(glm::ivec2 position)
 {
     if (m_chunks.find(position) != m_chunks.end())

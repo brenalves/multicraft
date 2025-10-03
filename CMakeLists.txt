@@ -22,8 +22,6 @@ add_executable(multicraft
     src/components/material.cpp
 
     src/game/player.cpp
-    src/game/quad.cpp
-    src/game/cube.cpp
     src/game/world.cpp
     src/game/chunk.cpp
 

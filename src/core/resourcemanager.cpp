@@ -2,6 +2,7 @@
 
 std::unordered_map<std::string, Shader*> ResourceManager::s_shaders;
 std::unordered_map<std::string, Texture*> ResourceManager::s_textures;
+std::unordered_map<std::string, Mesh*> ResourceManager::s_loadedMeshes;
 
 void ResourceManager::initialize()
 {
