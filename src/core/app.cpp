@@ -45,9 +45,9 @@ void App::run()
 {
     World world;
 
-    Input::setCursorMode(CURSOR_NORMAL);
-
     double lastTime = glfwGetTime();
+
+    Input::setCursorMode(CURSOR_NORMAL);
 
     while (m_running)
     {
@@ -78,6 +78,9 @@ void App::run()
         if (Input::isKeyPressed(GLFW_KEY_2))
             Renderer::setDrawMode(DrawMode::LINE);
 
+        if(Input::isKeyPressed(GLFW_KEY_F11))
+            m_window->toggleFullscreen();
+
         world.update(deltaTime);
 
         Renderer::clear();
@@ -100,4 +103,10 @@ void App::run()
 void App::close()
 {
     m_running = false;
+}
+
+void App::resize(int width, int height)
+{
+    Renderer::setViewport(0, 0, width, height);
+    World::getInstance()->onWindowResize(width, height);
 }

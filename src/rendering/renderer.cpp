@@ -30,6 +30,11 @@ void Renderer::setCamera(Camera& camera, Transform& cameraTransform)
     m_currentViewMatrix = glm::lookAt(cameraTransform.position, cameraTransform.position + cameraTransform.forward, cameraTransform.up);
 }
 
+void Renderer::setViewport(int x, int y, int width, int height)
+{
+    glViewport(x, y, width, height);
+}
+
 void Renderer::drawRay(const glm::vec3 &start, const glm::vec3 &direction, float length, const glm::vec3 &color, float lineWidth)
 {
     Shader& shader = ResourceManager::getShader("ray");

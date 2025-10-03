@@ -29,6 +29,11 @@ void World::update(float deltaTime)
     updateChunks();
 }
 
+void World::onWindowResize(int width, int height)
+{
+    m_player->getCamera().aspectRatio = (static_cast<float>(width) / static_cast<float>(height));
+}
+
 bool World::breakBlock(int x, int y, int z)
 {
     glm::ivec2 chunkPos = glm::ivec2(

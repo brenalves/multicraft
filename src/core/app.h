@@ -13,6 +13,7 @@ public:
 
     void run();
     void close();
+    void resize(int width, int height);
 
     inline Window& getWindow() { return *m_window; }
 

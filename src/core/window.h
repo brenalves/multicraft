@@ -14,12 +14,17 @@ public:
 
     inline int getWidth() const { return m_width; }
     inline int getHeight() const { return m_height; }
+    inline bool isFullscreen() const { return m_fullscreen; }
 
     void setTitle(const char* title);
+    void toggleFullscreen();
 
 private:
     GLFWwindow* m_ptr;
     int m_width;
     int m_height;
     const char* m_title;
+    bool m_fullscreen;
+    int m_lastWidth;
+    int m_lastHeight;
 };

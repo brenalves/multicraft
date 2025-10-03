@@ -1,9 +1,10 @@
 #include "window.h"
 
 #include "app.h"
+#include <iostream>
 
 Window::Window(int width, int height, const char *title)
-    : m_ptr(nullptr), m_width(width), m_height(height), m_title(title)
+    : m_ptr(nullptr), m_width(width), m_height(height), m_title(title), m_fullscreen(false)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -26,6 +27,13 @@ Window::Window(int width, int height, const char *title)
 
     glfwSetWindowCloseCallback(m_ptr, [](GLFWwindow* window) {
         App::getInstance()->close();
+    });
+
+    glfwSetFramebufferSizeCallback(m_ptr, [](GLFWwindow* window, int width, int height) {
+        Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        win->m_width = width;
+        win->m_height = height;
+        App::getInstance()->resize(width, height);
     });
 
     glfwSetWindowFocusCallback(m_ptr, [](GLFWwindow* window, int focused) {
@@ -57,4 +65,22 @@ void Window::setTitle(const char *title)
 {
     m_title = title;
     glfwSetWindowTitle(m_ptr, title);
+}
+
+void Window::toggleFullscreen()
+{
+    m_fullscreen = !m_fullscreen;
+
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    if(m_fullscreen)
+    {
+        m_lastWidth = m_width;
+        m_lastHeight = m_height;
+        glfwSetWindowMonitor(m_ptr, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+    else
+    {
+        glfwSetWindowMonitor(m_ptr, nullptr, (mode->width - m_lastWidth) / 2, (mode->height - m_lastHeight) / 2, m_lastWidth, m_lastHeight, mode->refreshRate);
+    }
 }

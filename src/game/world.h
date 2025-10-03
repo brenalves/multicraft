@@ -28,6 +28,7 @@ public:
     ~World();
 
     void update(float deltaTime);
+    void onWindowResize(int width, int height);
 
     bool breakBlock(int x, int y, int z);
     bool placeBlock(int x, int y, int z, BlockType type);

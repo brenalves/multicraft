@@ -28,6 +28,7 @@ public:
     static void clear();
 
     static void setCamera(Camera& camera, Transform& cameraTransform);
+    static void setViewport(int x, int y, int width, int height);
 
     static void drawRay(const glm::vec3& start, const glm::vec3& direction, float length, const glm::vec3& color, float lineWidth = 1.0f);
     static void drawChunk(const glm::vec3& position, Mesh& mesh);
