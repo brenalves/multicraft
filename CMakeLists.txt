@@ -39,6 +39,10 @@ target_link_libraries(multicraft PRIVATE glfw)
 
 if(WIN32)
     target_link_libraries(multicraft PRIVATE opengl32)
+
+    add_subdirectory(deps/glfw)
+
+    target_include_directories(multicraft PRIVATE deps/glfw/include deps/glm)
 else()
     target_link_libraries(multicraft PRIVATE GL)
 endif()

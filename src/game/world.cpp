@@ -87,6 +87,8 @@ bool World::placeBlock(int x, int y, int z, BlockType type)
     m_chunksToGenerate.push(chunkPos);
 
     // add neighbor chunks to regenerate mesh if the placed block is at the edge of the chunk
+    std::vector<glm::ivec2> neighbors;
+
     if (localX == 0)
         m_chunksToGenerate.push(glm::ivec2(chunkPos.x - 1, chunkPos.y));
     else if (localX == CHUNK_SIZE_X - 1)
